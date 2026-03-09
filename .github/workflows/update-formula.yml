@@ -1,0 +1,109 @@
+name: Update Formula
+
+on:
+  repository_dispatch:
+    types: [release-published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to update to (e.g. 0.12.0)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            VERSION="${{ github.event.client_payload.version }}"
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          # Strip leading v if present
+          VERSION="${VERSION#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Updating formula to $VERSION"
+
+      - name: Download checksums
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          curl -fsSL -o checksums.txt \
+            "https://github.com/yasserstudio/gpc/releases/download/${TAG}/checksums.txt"
+          cat checksums.txt
+
+      - name: Update formula
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          SHA_DARWIN_ARM64=$(grep "gpc-darwin-arm64" checksums.txt | awk '{print $1}')
+          SHA_DARWIN_X64=$(grep "gpc-darwin-x64" checksums.txt | awk '{print $1}')
+          SHA_LINUX_X64=$(grep "gpc-linux-x64" checksums.txt | awk '{print $1}')
+
+          cat > Formula/gpc.rb << 'FORMULA'
+          # typed: false
+          # frozen_string_literal: true
+
+          class Gpc < Formula
+            desc "Ship Android apps from your terminal — Google Play Console CLI"
+            homepage "https://github.com/yasserstudio/gpc"
+            version "VERSION_PLACEHOLDER"
+            license "MIT"
+
+            on_macos do
+              on_arm do
+                url "https://github.com/yasserstudio/gpc/releases/download/v#{version}/gpc-darwin-arm64"
+                sha256 "SHA_DARWIN_ARM64_PLACEHOLDER"
+              end
+              on_intel do
+                url "https://github.com/yasserstudio/gpc/releases/download/v#{version}/gpc-darwin-x64"
+                sha256 "SHA_DARWIN_X64_PLACEHOLDER"
+              end
+            end
+
+            on_linux do
+              on_intel do
+                url "https://github.com/yasserstudio/gpc/releases/download/v#{version}/gpc-linux-x64"
+                sha256 "SHA_LINUX_X64_PLACEHOLDER"
+              end
+            end
+
+            def install
+              binary = Dir["gpc-*"].first
+              bin.install binary => "gpc"
+            end
+
+            test do
+              assert_match version.to_s, shell_output("#{bin}/gpc --version")
+            end
+          end
+          FORMULA
+
+          # Replace placeholders
+          sed -i "s/VERSION_PLACEHOLDER/$VERSION/" Formula/gpc.rb
+          sed -i "s/SHA_DARWIN_ARM64_PLACEHOLDER/$SHA_DARWIN_ARM64/" Formula/gpc.rb
+          sed -i "s/SHA_DARWIN_X64_PLACEHOLDER/$SHA_DARWIN_X64/" Formula/gpc.rb
+          sed -i "s/SHA_LINUX_X64_PLACEHOLDER/$SHA_LINUX_X64/" Formula/gpc.rb
+
+          # Remove leading whitespace from heredoc
+          sed -i 's/^          //' Formula/gpc.rb
+
+          echo "Updated formula:"
+          cat Formula/gpc.rb
+
+      - name: Commit and push
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/gpc.rb
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "gpc $VERSION"
+          git push
