@@ -1,26 +1,26 @@
 class Gpc < Formula
   desc "The complete CLI for Google Play — 187 API endpoints, one tool"
   homepage "https://github.com/yasserstudio/gpc"
-  version "0.9.18"
+  version "0.9.19"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/yasserstudio/gpc/releases/download/v0.9.18/gpc-darwin-arm64"
-      sha256 "d7a291f44c9952b6a5b9c7cd5d09152a5d998644236f3de5323121351c34d20d"
+      url "https://github.com/yasserstudio/gpc/releases/download/v0.9.19/gpc-darwin-arm64"
+      sha256 "1995deffb54ecb7dc50595dbe91257234e922cd15f328476cfc7e0fea33f0ec6"
     else
-      url "https://github.com/yasserstudio/gpc/releases/download/v0.9.18/gpc-darwin-x64"
-      sha256 "78a7e86410f7b77148569f9c7b0132f0280f151b2516969b302dd37c63f3d495"
+      url "https://github.com/yasserstudio/gpc/releases/download/v0.9.19/gpc-darwin-x64"
+      sha256 "fc9b8c479081cc53c1a5a0b9a3288a736aa947a2aa645dbc40bcad17f53c1da0"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/yasserstudio/gpc/releases/download/v0.9.18/gpc-linux-arm64"
-      sha256 "53aeb241ff5e2e3200adad3932fe62996c180bf113f8f2f5a15329567d4ed365"
+      url "https://github.com/yasserstudio/gpc/releases/download/v0.9.19/gpc-linux-arm64"
+      sha256 "28b0feab0f59b49c110d3c05a7d6728fd9dc06c14a4075ef0e926a7377c37ce7"
     else
-      url "https://github.com/yasserstudio/gpc/releases/download/v0.9.18/gpc-linux-x64"
-      sha256 "a311ddea61c755b51e8e83f96c65aa4097d2a6c451c0e52adde2e93bfdb700d2"
+      url "https://github.com/yasserstudio/gpc/releases/download/v0.9.19/gpc-linux-x64"
+      sha256 "e7b0a6d33b8772ec56d83e040b54dd03acf295cf8666acdcea0b2ff2205b3422"
     end
   end
 
