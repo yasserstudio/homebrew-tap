@@ -4,24 +4,24 @@
 class Gpc < Formula
   desc "Ship Android apps from your terminal — Google Play Console CLI"
   homepage "https://github.com/yasserstudio/gpc"
-  version "0.9.32"
+  version "0.9.33"
   license "MIT"
 
   on_macos do
     on_arm do
       url "https://github.com/yasserstudio/gpc/releases/download/v#{version}/gpc-darwin-arm64"
-      sha256 "d3bdbfc2889d955eabc541d24c1dd89938cde0c22f8eaafe1cf1b6e7a9d4143d"
+      sha256 "d5088a8800a0039445a2caa2eda100c5708f75f5a52c66b50f848e75cb6d1999"
     end
     on_intel do
       url "https://github.com/yasserstudio/gpc/releases/download/v#{version}/gpc-darwin-x64"
-      sha256 "e72157a0d5ad023aef8f067210a96fc7b13e1df421558317927cbc7c0980e7d8"
+      sha256 "7053e60c6e57cfb2779447f02b122894fb7a563ae97381ee6cc6fc1b94bdddea"
     end
   end
 
   on_linux do
     on_intel do
       url "https://github.com/yasserstudio/gpc/releases/download/v#{version}/gpc-linux-x64"
-      sha256 "8f17a28e0b370c24cb310bcd2244c1ee0c461fe1b824d623d70ae8c84ea1c93f"
+      sha256 "2a4bfc3e83fe31a7e0f0d9f8f69f3158822603dd5fd178779b1f515d4234f44e"
     end
   end
 
