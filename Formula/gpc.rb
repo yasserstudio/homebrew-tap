@@ -19,6 +19,10 @@ class Gpc < Formula
   end
 
   on_linux do
+    on_arm do
+      url "https://github.com/yasserstudio/gpc/releases/download/v#{version}/gpc-linux-arm64"
+      sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+    end
     on_intel do
       url "https://github.com/yasserstudio/gpc/releases/download/v#{version}/gpc-linux-x64"
       sha256 "7ce00e2c0fbdaee9702f7103fb2cc91a49358468498a5800b837b8ec7e69fbbc"

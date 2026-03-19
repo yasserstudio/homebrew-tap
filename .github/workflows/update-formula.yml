@@ -45,6 +45,7 @@ jobs:
 
           SHA_DARWIN_ARM64=$(grep "gpc-darwin-arm64" checksums.txt | awk '{print $1}')
           SHA_DARWIN_X64=$(grep "gpc-darwin-x64" checksums.txt | awk '{print $1}')
+          SHA_LINUX_ARM64=$(grep "gpc-linux-arm64" checksums.txt | awk '{print $1}')
           SHA_LINUX_X64=$(grep "gpc-linux-x64" checksums.txt | awk '{print $1}')
 
           cat > Formula/gpc.rb << 'FORMULA'
@@ -69,6 +70,10 @@ jobs:
             end
 
             on_linux do
+              on_arm do
+                url "https://github.com/yasserstudio/gpc/releases/download/v#{version}/gpc-linux-arm64"
+                sha256 "SHA_LINUX_ARM64_PLACEHOLDER"
+              end
               on_intel do
                 url "https://github.com/yasserstudio/gpc/releases/download/v#{version}/gpc-linux-x64"
                 sha256 "SHA_LINUX_X64_PLACEHOLDER"
@@ -90,6 +95,7 @@ jobs:
           sed -i "s/VERSION_PLACEHOLDER/$VERSION/" Formula/gpc.rb
           sed -i "s/SHA_DARWIN_ARM64_PLACEHOLDER/$SHA_DARWIN_ARM64/" Formula/gpc.rb
           sed -i "s/SHA_DARWIN_X64_PLACEHOLDER/$SHA_DARWIN_X64/" Formula/gpc.rb
+          sed -i "s/SHA_LINUX_ARM64_PLACEHOLDER/$SHA_LINUX_ARM64/" Formula/gpc.rb
           sed -i "s/SHA_LINUX_X64_PLACEHOLDER/$SHA_LINUX_X64/" Formula/gpc.rb
 
           # Remove leading whitespace from heredoc
