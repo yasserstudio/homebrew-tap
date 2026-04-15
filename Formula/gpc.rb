@@ -32,10 +32,13 @@ class Gpc < Formula
   def install
     binary = Dir["gpc-*"].first
     bin.install binary => "gpc"
+    # Bun-compiled binaries in the release assets land as mode 0644 once
+    # Homebrew unpacks them, so the exec bit must be set explicitly before
+    # anything tries to run `gpc --version` or generate completions.
+    chmod 0755, bin/"gpc"
 
     # Generate shell completions from the just-installed binary so bash, zsh,
-    # and fish users get completion on upgrade with no eval step. Errors are
-    # swallowed: a completion-generation failure must not block the install.
+    # and fish users get completion on upgrade with no eval step.
     generate_completions_from_executable(bin/"gpc", "completion")
   end
 
