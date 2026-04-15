@@ -32,9 +32,15 @@ class Gpc < Formula
   def install
     binary = Dir["gpc-*"].first
     bin.install binary => "gpc"
+
+    # Generate shell completions from the just-installed binary so bash, zsh,
+    # and fish users get completion on upgrade with no eval step. Errors are
+    # swallowed: a completion-generation failure must not block the install.
+    generate_completions_from_executable(bin/"gpc", "completion")
   end
 
   test do
     assert_match version.to_s, shell_output("#{bin}/gpc --version")
+    assert_match "complete -F _gpc gpc", shell_output("#{bin}/gpc completion bash")
   end
 end
