@@ -1,0 +1,114 @@
+name: Update gmc Formula
+
+on:
+  repository_dispatch:
+    types: [gmc-release-published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to update to (e.g. 1.0.0)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            VERSION="${{ github.event.client_payload.version }}"
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          VERSION="${VERSION#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Updating gmc formula to $VERSION"
+
+      - name: Download checksums
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          curl -fsSL -o checksums.txt \
+            "https://github.com/yasserstudio/gmc/releases/download/${TAG}/checksums.txt"
+          cat checksums.txt
+
+      - name: Update formula
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          SHA_DARWIN_ARM64=$(grep "gmc-darwin-arm64" checksums.txt | awk '{print $1}')
+          SHA_DARWIN_X64=$(grep "gmc-darwin-x64" checksums.txt | awk '{print $1}')
+          SHA_LINUX_ARM64=$(grep "gmc-linux-arm64" checksums.txt | awk '{print $1}')
+          SHA_LINUX_X64=$(grep "gmc-linux-x64" checksums.txt | awk '{print $1}')
+
+          cat > Formula/gmc.rb << 'FORMULA'
+          # typed: false
+          # frozen_string_literal: true
+
+          # Homebrew formula for gmc — the Google Merchant Center CLI.
+          # Installs the self-contained, prebuilt binary (no Node required) from the
+          # GitHub release. Auto-bumped on each release by this workflow.
+          class Gmc < Formula
+            desc "Typed, CI-friendly CLI for the Google Merchant API, with an offline feed-compliance preflight"
+            homepage "https://yasserstudio.github.io/gmc/"
+            version "VERSION_PLACEHOLDER"
+            license "MIT"
+
+            on_macos do
+              on_arm do
+                url "https://github.com/yasserstudio/gmc/releases/download/v#{version}/gmc-darwin-arm64"
+                sha256 "SHA_DARWIN_ARM64_PLACEHOLDER"
+              end
+              on_intel do
+                url "https://github.com/yasserstudio/gmc/releases/download/v#{version}/gmc-darwin-x64"
+                sha256 "SHA_DARWIN_X64_PLACEHOLDER"
+              end
+            end
+
+            on_linux do
+              on_arm do
+                url "https://github.com/yasserstudio/gmc/releases/download/v#{version}/gmc-linux-arm64"
+                sha256 "SHA_LINUX_ARM64_PLACEHOLDER"
+              end
+              on_intel do
+                url "https://github.com/yasserstudio/gmc/releases/download/v#{version}/gmc-linux-x64"
+                sha256 "SHA_LINUX_X64_PLACEHOLDER"
+              end
+            end
+
+            def install
+              binary = Dir["gmc-*"].first
+              bin.install binary => "gmc"
+            end
+
+            test do
+              assert_match version.to_s, shell_output("#{bin}/gmc --version")
+            end
+          end
+          FORMULA
+
+          sed -i "s/VERSION_PLACEHOLDER/$VERSION/" Formula/gmc.rb
+          sed -i "s/SHA_DARWIN_ARM64_PLACEHOLDER/$SHA_DARWIN_ARM64/" Formula/gmc.rb
+          sed -i "s/SHA_DARWIN_X64_PLACEHOLDER/$SHA_DARWIN_X64/" Formula/gmc.rb
+          sed -i "s/SHA_LINUX_ARM64_PLACEHOLDER/$SHA_LINUX_ARM64/" Formula/gmc.rb
+          sed -i "s/SHA_LINUX_X64_PLACEHOLDER/$SHA_LINUX_X64/" Formula/gmc.rb
+          sed -i 's/^          //' Formula/gmc.rb
+
+          echo "Updated formula:"
+          cat Formula/gmc.rb
+
+      - name: Commit and push
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/gmc.rb
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "gmc $VERSION"
+          git push
