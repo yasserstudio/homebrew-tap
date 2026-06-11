@@ -2,33 +2,33 @@
 # frozen_string_literal: true
 
 # Homebrew formula for gmc — the Google Merchant Center CLI.
-# Installs the self-contained, prebuilt binary (no Node required) from the GitHub
-# release. Auto-bumped on each release by .github/workflows/update-formula.yml.
+# Installs the self-contained, prebuilt binary (no Node required) from the
+# GitHub release. Auto-bumped on each release by this workflow.
 class Gmc < Formula
   desc "Typed, CI-friendly CLI for the Google Merchant API, with an offline feed-compliance preflight"
   homepage "https://yasserstudio.github.io/gmc/"
-  version "1.0.0"
+  version "1.0.1"
   license "MIT"
 
   on_macos do
     on_arm do
       url "https://github.com/yasserstudio/gmc/releases/download/v#{version}/gmc-darwin-arm64"
-      sha256 "49639fef2c9493cbe36875c7d0caa6d9949f05e3d7b5a2c6e1eb4024c2cc6c59"
+      sha256 "4eeaae20443b490b62f09237ebf00753960828c509c7454c6652d0f17898c5fa"
     end
     on_intel do
       url "https://github.com/yasserstudio/gmc/releases/download/v#{version}/gmc-darwin-x64"
-      sha256 "9c13567a81153bf577358115af18abb88a56879f40049f4109fdeeaa53a59e80"
+      sha256 "cc6d4168c591f0e7ba63b9256ab67e16fec9754f1679c23f2b08a2d3a27de333"
     end
   end
 
   on_linux do
     on_arm do
       url "https://github.com/yasserstudio/gmc/releases/download/v#{version}/gmc-linux-arm64"
-      sha256 "10b64a4dd752f734f114df1360c216f183692cc2e63f8b03d76d373f07fe53f1"
+      sha256 "d40627dd862fd15631fb73c47c233ce0326e5ca75b5327c85d31d44ea88c0469"
     end
     on_intel do
       url "https://github.com/yasserstudio/gmc/releases/download/v#{version}/gmc-linux-x64"
-      sha256 "960b5f7f2a76c3aa88aec0bfa4313dd170cc86b26c5892c8ec85e0b61d024b7c"
+      sha256 "8dcc78be8f7c07883a6dc069a815252d09a00b767a46fe8461ef60bdd54f8529"
     end
   end
 
