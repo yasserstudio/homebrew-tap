@@ -7,28 +7,28 @@
 class Gmc < Formula
   desc "Typed, CI-friendly CLI for the Google Merchant API, with an offline feed-compliance preflight"
   homepage "https://yasserstudio.github.io/gmc/"
-  version "1.0.17"
+  version "1.1.0"
   license "MIT"
 
   on_macos do
     on_arm do
       url "https://github.com/yasserstudio/gmc/releases/download/v#{version}/gmc-darwin-arm64"
-      sha256 "6fc8f4961b87d83425a92939b5b4fe3cb718df7b55d21b4c2aa3d64cd93764ca"
+      sha256 "325a55682952d317b69fa64e1296c89d44b186001b4fd74ee49dd52f976663d6"
     end
     on_intel do
       url "https://github.com/yasserstudio/gmc/releases/download/v#{version}/gmc-darwin-x64"
-      sha256 "10355b9f784b1a0dbf22a5838f9b91a2bf92561c2162a5d1dc3d9f54d12976a6"
+      sha256 "69e4e1e5ac9e8da890e80acae26b8b2499a6798a04827ddcbe25afe29f48f062"
     end
   end
 
   on_linux do
     on_arm do
       url "https://github.com/yasserstudio/gmc/releases/download/v#{version}/gmc-linux-arm64"
-      sha256 "02ef9955006b20a1e3770b5e01e3f0549ad3a8ec627a1bf3aa488f908cc8eff9"
+      sha256 "0c92ca495a18a162d95631ddfb897fb712c28b92d66d0feeae646028cf7e1673"
     end
     on_intel do
       url "https://github.com/yasserstudio/gmc/releases/download/v#{version}/gmc-linux-x64"
-      sha256 "b047e55c058e9138b87cfe8da640f63c11a9afb36014d911791fa935a7c0d9d1"
+      sha256 "00372108ddb24079a6ddc9a00d23e271e989d138aae6e68d845e78137479ccd1"
     end
   end
 
